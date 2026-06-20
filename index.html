@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulacro Examen Teórico - Licencia de Conducción Colombia</title>
+<style>
+  :root{
+    --asphalt:#23262b;--asphalt-2:#33373e;--signal-yellow:#ffc72c;
+    --signal-red:#d6432c;--signal-green:#2e8b57;--lane:#f4f1e8;--muted:#8b9099;
+    --badge-high:#e05a2b;--badge-med:#e0a82b;--badge-low:#5b8dd9;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Helvetica Neue',Arial,sans-serif;background:var(--asphalt);color:var(--lane);min-height:100vh;display:flex;justify-content:center;}
+  .app{width:100%;max-width:520px;background:var(--asphalt);min-height:100vh;display:flex;flex-direction:column;}
+  header{padding:20px 18px 14px;border-bottom:4px dashed var(--signal-yellow);}
+  .eyebrow{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--signal-yellow);font-weight:700;}
+  h1{font-size:22px;margin-top:4px;font-weight:800;letter-spacing:-0.5px;line-height:1.15;}
+  .sub{color:var(--muted);font-size:12.5px;margin-top:6px;}
+  .progress-track{margin:14px 18px 0;height:6px;background:var(--asphalt-2);border-radius:4px;overflow:hidden;}
+  .progress-fill{height:100%;background:var(--signal-yellow);width:0%;transition:width .25s ease;}
+  .progress-label{margin:8px 18px 4px;font-size:12px;color:var(--muted);display:flex;justify-content:space-between;}
+  .score-bar-wrap{margin:6px 18px 0;display:flex;align-items:center;gap:8px;}
+  .score-bar-track{flex:1;height:4px;background:var(--asphalt-2);border-radius:4px;overflow:hidden;}
+  .score-bar-fill{height:100%;background:var(--signal-green);width:0%;transition:width .25s ease;}
+  .score-bar-label{font-size:11px;color:var(--muted);white-space:nowrap;}
+  main{flex:1;padding:18px;}
+  .card{background:var(--asphalt-2);border-radius:10px;padding:18px;border:1px solid #3d424a;}
+  .topic-tag{display:inline-block;font-size:10.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--asphalt);background:var(--signal-yellow);padding:3px 9px;border-radius:3px;font-weight:800;margin-bottom:8px;}
+  .weight-badge{display:inline-block;font-size:10px;font-weight:800;padding:2px 8px;border-radius:3px;margin-bottom:12px;margin-left:6px;text-transform:uppercase;letter-spacing:1px;}
+  .weight-badge.high{background:var(--badge-high);color:#fff;}
+  .weight-badge.med{background:var(--badge-med);color:#1b1d20;}
+  .weight-badge.low{background:var(--badge-low);color:#fff;}
+  .question{font-size:17px;font-weight:700;line-height:1.35;margin-bottom:16px;}
+  .options{display:flex;flex-direction:column;gap:10px;}
+  .option{text-align:left;background:var(--asphalt);border:1.5px solid #4a4f58;color:var(--lane);border-radius:8px;padding:12px 14px;font-size:14.5px;cursor:pointer;transition:border-color .15s,background .15s;display:flex;gap:10px;align-items:flex-start;}
+  .option:hover:not(:disabled){border-color:var(--signal-yellow);}
+  .option .letter{font-weight:800;color:var(--signal-yellow);flex-shrink:0;}
+  .option.correct{border-color:var(--signal-green);background:rgba(46,139,87,0.18);}
+  .option.incorrect{border-color:var(--signal-red);background:rgba(214,67,44,0.18);}
+  .option.correct .letter{color:var(--signal-green);}
+  .option.incorrect .letter{color:var(--signal-red);}
+  .option:disabled{cursor:default;}
+  .pts-feedback{margin-top:10px;font-size:13px;font-weight:700;padding:6px 10px;border-radius:6px;display:none;}
+  .pts-feedback.correct{background:rgba(46,139,87,0.2);color:#6fcf97;}
+  .pts-feedback.incorrect{background:rgba(214,67,44,0.15);color:#eb8a7a;}
+  .pts-feedback.show{display:block;}
+  .explanation{margin-top:10px;padding:12px 14px;background:var(--asphalt);border-left:4px solid var(--signal-yellow);border-radius:6px;font-size:13px;color:#d8dade;line-height:1.5;display:none;}
+  .explanation.show{display:block;}
+  .nav{margin-top:18px;display:flex;justify-content:flex-end;}
+  .btn{background:var(--signal-yellow);color:var(--asphalt);border:none;font-weight:800;font-size:14px;padding:12px 22px;border-radius:8px;cursor:pointer;letter-spacing:0.5px;}
+  .btn:disabled{background:#4a4f58;color:var(--muted);cursor:not-allowed;}
+  .btn.secondary{background:transparent;border:1.5px solid var(--signal-yellow);color:var(--signal-yellow);}
+  .results{text-align:center;padding:10px 0 4px;}
+  .results .big-score{font-size:52px;font-weight:900;letter-spacing:-2px;margin:14px 0 4px;}
+  .results .pass{color:var(--signal-green);}
+  .results .fail{color:var(--signal-red);}
+  .results .verdict{font-size:15px;font-weight:700;margin-bottom:6px;}
+  .results .detail{color:var(--muted);font-size:13px;margin-bottom:18px;}
+  .legend{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:18px;}
+  .legend-item{font-size:11px;display:flex;align-items:center;gap:4px;color:var(--muted);}
+  .legend-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+  .review-list{text-align:left;display:flex;flex-direction:column;gap:10px;margin-top:4px;}
+  .review-item{background:var(--asphalt);border-radius:8px;padding:10px 12px;border-left:4px solid var(--asphalt-2);font-size:13px;}
+  .review-item.wrong{border-left-color:var(--signal-red);}
+  .review-item.right{border-left-color:var(--signal-green);}
+  .review-item .q{font-weight:700;margin-bottom:4px;}
+  .review-item .a{color:var(--muted);}
+
+  /* ── RESULTS SCREEN ── */
+  .results-screen{display:flex;flex-direction:column;}
+
+  .verdict-hero{
+    padding:36px 20px 28px;
+    display:flex;flex-direction:column;align-items:center;gap:6px;
+    text-align:center;
+  }
+  .verdict-hero.verdict-pass{background:linear-gradient(160deg,#1a2e1f 0%,#192320 100%);}
+  .verdict-hero.verdict-fail{background:linear-gradient(160deg,#2a1a1a 0%,#221a1a 100%);}
+  .verdict-icon{font-size:48px;margin-bottom:8px;line-height:1;}
+  .verdict-score{font-size:56px;font-weight:900;letter-spacing:-2px;line-height:1;color:#fff;}
+  .verdict-max{font-size:22px;font-weight:400;color:var(--muted);}
+  .verdict-label{font-size:22px;font-weight:800;letter-spacing:-0.5px;margin-top:4px;}
+  .verdict-hero.verdict-pass .verdict-label{color:var(--signal-green);}
+  .verdict-hero.verdict-fail .verdict-label{color:var(--signal-red);}
+  .verdict-pct{font-size:12.5px;color:var(--muted);margin-top:2px;}
+  .verdict-chips{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;justify-content:center;}
+  .vchip{font-size:13px;font-weight:700;padding:6px 14px;border-radius:20px;}
+  .vchip-green{background:rgba(46,139,87,0.2);color:#6fcf97;border:1px solid rgba(46,139,87,0.3);}
+  .vchip-red{background:rgba(214,67,44,0.15);color:#eb8a7a;border:1px solid rgba(214,67,44,0.25);}
+
+  .results-body{padding:20px 16px 32px;display:flex;flex-direction:column;gap:12px;}
+
+  .restart-btn{
+    width:100%;background:transparent;border:1.5px solid #3d424a;
+    color:var(--lane);font-size:14px;font-weight:700;padding:13px;
+    border-radius:10px;cursor:pointer;transition:border-color .15s,background .15s;
+  }
+  .restart-btn:hover{border-color:var(--signal-yellow);background:#2a2d33;}
+
+  .res-section-title{
+    font-size:11px;letter-spacing:2.5px;text-transform:uppercase;
+    font-weight:800;padding:6px 0 2px;
+  }
+  .res-title-wrong{color:var(--signal-red);}
+  .res-title-right{color:var(--signal-green);margin-top:8px;}
+
+  .res-card{
+    border-radius:10px;padding:14px;
+    border-left:4px solid transparent;
+    background:var(--asphalt-2);
+    display:flex;flex-direction:column;gap:7px;
+  }
+  .res-card.res-wrong{border-left-color:var(--signal-red);}
+  .res-card.res-right{border-left-color:var(--signal-green);}
+
+  .res-card-header{display:flex;align-items:center;gap:7px;flex-wrap:wrap;}
+  .res-icon{font-size:14px;flex-shrink:0;}
+  .res-topic{font-size:10.5px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);font-weight:700;flex:1;}
+  .res-badge{font-size:9.5px;font-weight:800;padding:2px 7px;border-radius:3px;text-transform:uppercase;letter-spacing:0.8px;flex-shrink:0;}
+  .res-badge.high{background:var(--badge-high);color:#fff;}
+  .res-badge.med{background:var(--badge-med);color:#1b1d20;}
+  .res-badge.low{background:var(--badge-low);color:#fff;}
+
+  .res-question{font-size:14px;font-weight:700;line-height:1.35;color:var(--lane);}
+  .res-answer{font-size:12.5px;line-height:1.4;}
+  .res-answer.wrong-ans{color:#eb8a7a;}
+  .res-answer.correct-ans{color:#6fcf97;}
+  .res-explanation{font-size:12px;color:var(--muted);line-height:1.5;padding-top:4px;border-top:1px solid #3d424a;}
+  footer{padding:14px 18px 24px;text-align:center;font-size:11px;color:var(--muted);line-height:1.6;}
+
+  /* ── START SCREEN REDESIGN ── */
+  .start-screen{padding:0;display:flex;flex-direction:column;min-height:calc(100vh - 60px);}
+
+  .hero{position:relative;background:#181a1e;overflow:hidden;padding:40px 24px 32px;display:flex;flex-direction:column;align-items:flex-start;}
+  .hero::before{content:'';position:absolute;left:50%;transform:translateX(-50%);bottom:-20px;width:8px;height:200%;background:repeating-linear-gradient(to bottom,var(--signal-yellow) 0px,var(--signal-yellow) 28px,transparent 28px,transparent 56px);opacity:0.22;animation:road 1.2s linear infinite;}
+  @keyframes road{from{transform:translateX(-50%) translateY(0)}to{transform:translateX(-50%) translateY(56px)}}
+
+  .hero-eyebrow{font-size:10px;letter-spacing:4px;text-transform:uppercase;color:var(--signal-yellow);font-weight:800;margin-bottom:16px;position:relative;}
+  .hero-title{font-size:36px;font-weight:900;line-height:1.0;letter-spacing:-1.5px;color:#fff;position:relative;margin-bottom:6px;}
+  .hero-title em{font-style:normal;color:var(--signal-yellow);}
+  .hero-subtitle{font-size:13px;color:#7a8090;position:relative;margin-bottom:28px;line-height:1.5;}
+  .hero-stats{display:flex;gap:10px;position:relative;flex-wrap:wrap;}
+  .stat-chip{background:#23262b;border:1px solid #3d424a;border-radius:8px;padding:10px 14px;display:flex;flex-direction:column;gap:2px;}
+  .stat-chip .num{font-size:22px;font-weight:900;color:#fff;letter-spacing:-1px;line-height:1;}
+  .stat-chip .lbl{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);font-weight:700;}
+  .stat-chip.yellow .num{color:var(--signal-yellow);}
+
+  .start-body{padding:24px 18px;flex:1;display:flex;flex-direction:column;gap:20px;}
+
+  .score-table{border:1px solid #3d424a;border-radius:10px;overflow:hidden;}
+  .score-table-header{background:#2a2d33;padding:10px 14px;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);font-weight:700;display:grid;grid-template-columns:12px 1fr auto auto;gap:8px;align-items:center;}
+  .score-row{display:grid;grid-template-columns:12px 1fr auto auto;gap:8px;align-items:center;padding:13px 14px;border-top:1px solid #2e3138;}
+  .score-pip{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+  .score-label{font-size:14px;font-weight:600;color:var(--lane);}
+  .score-qty{font-size:12px;color:var(--muted);text-align:right;white-space:nowrap;}
+  .score-pts{font-size:14px;font-weight:800;color:#fff;text-align:right;}
+
+  .rules{display:flex;flex-direction:column;gap:12px;}
+  .rule{display:flex;align-items:flex-start;gap:12px;}
+  .rule-icon{width:32px;height:32px;border-radius:8px;background:#2a2d33;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;}
+  .rule-text{font-size:13px;color:#b0b5be;line-height:1.45;}
+  .rule-text strong{color:var(--lane);}
+
+  .start-cta{padding:0 18px 32px;}
+  .cta-btn{width:100%;background:var(--signal-yellow);color:#181a1e;border:none;font-weight:900;font-size:16px;padding:16px 0;border-radius:12px;cursor:pointer;letter-spacing:0.3px;display:flex;align-items:center;justify-content:center;gap:10px;transition:transform .1s,box-shadow .1s;box-shadow:0 4px 24px rgba(255,199,44,0.25);}
+  .cta-btn:hover{transform:translateY(-1px);box-shadow:0 6px 32px rgba(255,199,44,0.35);}
+  .cta-btn:active{transform:translateY(0);}
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="eyebrow">Simulacro · Examen teórico</div>
+    <h1>Licencia de conducción · Colombia</h1>
+    <div class="sub">40 preguntas ponderadas · Banco de 84 · Ley 769/2002 · Aprobación: 90%</div>
+  </header>
+  <div id="progress-wrap" style="display:none;">
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="progress-label">
+      <span id="progressText">Pregunta 1 de 40</span>
+      <span id="qScoreText"></span>
+    </div>
+    <div class="score-bar-wrap">
+      <div class="score-bar-track"><div class="score-bar-fill" id="scoreBarFill"></div></div>
+      <div class="score-bar-label" id="scoreBarLabel">0 / 85 pts</div>
+    </div>
+  </div>
+  <main id="main">
+    <div class="start-screen" id="startScreen">
+
+      <!-- HERO -->
+      <div class="hero">
+        <div class="hero-eyebrow">Colombia · Ley 769 de 2002</div>
+        <div class="hero-title">Examen<br><em>teórico</em><br>de tránsito</div>
+        <div class="hero-subtitle">Simulacro oficial · Categoría B1<br>Preguntas aleatorias cada intento</div>
+        <div class="hero-stats">
+          <div class="stat-chip yellow">
+            <span class="num">84</span>
+            <span class="lbl">Preguntas</span>
+          </div>
+          <div class="stat-chip">
+            <span class="num">40</span>
+            <span class="lbl">Por intento</span>
+          </div>
+          <div class="stat-chip">
+            <span class="num">90%</span>
+            <span class="lbl">Para aprobar</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- BODY -->
+      <div class="start-body">
+
+        <!-- Score breakdown -->
+        <div class="score-table">
+          <div class="score-table-header">
+            <span></span>
+            <span>Tipo</span>
+            <span>Preguntas</span>
+            <span>Puntaje</span>
+          </div>
+          <div class="score-row">
+            <div class="score-pip" style="background:#e05a2b;"></div>
+            <span class="score-label">Alta</span>
+            <span class="score-qty">10 × 4 pts</span>
+            <span class="score-pts">40</span>
+          </div>
+          <div class="score-row">
+            <div class="score-pip" style="background:#e0a82b;"></div>
+            <span class="score-label">Media</span>
+            <span class="score-qty">20 × 2 pts</span>
+            <span class="score-pts">40</span>
+          </div>
+          <div class="score-row">
+            <div class="score-pip" style="background:#5b8dd9;"></div>
+            <span class="score-label">Baja</span>
+            <span class="score-qty">10 × 0.5 pts</span>
+            <span class="score-pts">5</span>
+          </div>
+          <div class="score-row" style="background:#2a2d33;">
+            <div class="score-pip" style="background:transparent;"></div>
+            <span class="score-label" style="color:var(--muted);font-size:12px;">Total máximo</span>
+            <span class="score-qty">—</span>
+            <span class="score-pts" style="color:var(--signal-yellow);">85</span>
+          </div>
+        </div>
+
+        <!-- Rules -->
+        <div class="rules">
+          <div class="rule">
+            <div class="rule-icon">🔀</div>
+            <div class="rule-text"><strong>Aleatorio cada vez.</strong> El orden de preguntas y opciones cambia en cada intento.</div>
+          </div>
+          <div class="rule">
+            <div class="rule-icon">💡</div>
+            <div class="rule-text"><strong>Explicación inmediata.</strong> Cada respuesta incluye el artículo de la Ley 769/2002 que la sustenta.</div>
+          </div>
+          <div class="rule">
+            <div class="rule-icon">🎯</div>
+            <div class="rule-text"><strong>Necesitas 76.5 pts</strong> (90% de 85) para aprobar, igual que el examen oficial CALE.</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- CTA -->
+      <div class="start-cta">
+        <button class="cta-btn" id="startBtn">
+          Iniciar simulacro <span>→</span>
+        </button>
+      </div>
+
+    </div>
+  </main>
+  <footer>Material de práctica educativa. Basado en Ley 769 de 2002 y sus modificaciones. No certificado por el Ministerio de Transporte ni por los CALE.</footer>
+</div>
+<script>
+const WEIGHTS = {high:4, med:2, low:0.5};
+
+const allQuestions = [
+
+// ══════════════════════════════════════
+// ALTA — 4 pts (banco: 28 preguntas)
+// ══════════════════════════════════════
+{weight:'high',topic:"Prelación en vía (Art. 70)",
+q:"En una intersección sin señalización, dos vehículos llegan al mismo tiempo. ¿Quién tiene prelación?",
+options:["El vehículo que va más rápido","El vehículo que viene por la derecha","El vehículo más grande","El que toca la bocina primero"],
+correct:1,
+explanation:"El Art. 70 de la Ley 769/2002 establece que en intersecciones no señalizadas (salvo glorietas) tiene prelación el vehículo que se encuentre a la derecha."},
+
+{weight:'high',topic:"Prelación en vía (Art. 70)",
+q:"Cuando un vehículo se encuentra dentro de una glorieta y otro intenta ingresar, ¿quién tiene prelación?",
+options:["El que entra, porque llega con impulso","El que está dentro de la glorieta, siempre que esté en movimiento","El más pequeño para facilitar el tráfico","Ninguno; deben negociar el paso"],
+correct:1,
+explanation:"El Art. 70 indica expresamente: cuando un vehículo se encuentre dentro de una glorieta, tiene prelación sobre los que van a entrar a ella, siempre y cuando esté en movimiento."},
+
+{weight:'high',topic:"Prelación en vía (Art. 70)",
+q:"En una vía de doble sentido, dos vehículos en sentido contrario intentan girar al mismo lado. ¿Quién tiene prelación?",
+options:["El que gira a la izquierda","El que gira a la derecha","El de mayor velocidad","El de servicio público"],
+correct:1,
+explanation:"Según el Art. 70, cuando dos vehículos transiten en sentido contrario e intenten girar al mismo lado, tiene prelación el que va a girar a la derecha."},
+
+{weight:'high',topic:"Prelación en vía (Art. 70)",
+q:"Dos vehículos llegan a una intersección desde vías diferentes; uno va a girar a la derecha. ¿Quién tiene prelación?",
+options:["El que va derecho siempre","El que se encuentra a la derecha del otro","El de mayor cilindraje","El que lleva más pasajeros"],
+correct:1,
+explanation:"El Art. 70 establece: cuando dos vehículos de vías diferentes llegan a una intersección y uno va a girar a la derecha, tiene prelación el vehículo que se encuentra a la derecha."},
+
+{weight:'high',topic:"Embriaguez y sanciones (Arts. 131, 152)",
+q:"Conducir en estado de embriaguez acarrea, además de la multa de 30 SMLDV:",
+options:["Solo una amonestación verbal","Suspensión de la licencia entre 8 meses y 1 año e inmovilización del vehículo","Cancelación inmediata y definitiva de la licencia","Multa adicional de 100 SMLDV"],
+correct:1,
+explanation:"El Art. 131 literal D y el Art. 152 establecen que conducir en estado de embriaguez implica multa de 30 SMLDV, suspensión de la licencia de 8 meses a 1 año e inmovilización del vehículo."},
+
+{weight:'high',topic:"Embriaguez y sanciones (Art. 152)",
+q:"La reincidencia en tercer grado de embriaguez es causal para:",
+options:["Una multa del doble","La suspensión de la licencia por 10 años","La cancelación definitiva de la licencia de conducción","Un curso obligatorio de 80 horas"],
+correct:2,
+explanation:"El parágrafo del Art. 152 establece que la reincidencia en un tercer grado de embriaguez es causal para determinar la cancelación definitiva de la licencia de conducción."},
+
+{weight:'high',topic:"Paso peatonal (Arts. 57, 63)",
+q:"Al aproximarse a un paso peatonal sin semáforo donde hay personas cruzando, el conductor debe:",
+options:["Acelerar para pasar antes de que crucen","Pitar para que el peatón espere","Detenerse o reducir velocidad y ceder el paso al peatón","Ceder solo si el peatón ya está en la mitad de la calzada"],
+correct:2,
+explanation:"El Art. 63 establece que los conductores deben respetar los derechos e integridad de los peatones dándoles prelación en la vía; el Art. 57 indica que el peatón puede cruzar respetando las señales."},
+
+{weight:'high',topic:"Accidente de tránsito con heridos",
+q:"Al ser implicado en un accidente con personas heridas, el conductor debe:",
+options:["Huir para evitar problemas legales","Detenerse, prestar auxilio, llamar al 123 y no mover los vehículos sin autorización","Mover inmediatamente los vehículos para no obstruir el tráfico","Esperar 24 horas antes de reportarlo"],
+correct:1,
+explanation:"Abandonar el lugar de un accidente con heridos constituye infracción grave con posibles consecuencias penales. El conductor debe detenerse, prestar primeros auxilios, llamar al 123 y esperar a las autoridades."},
+
+{weight:'high',topic:"Señal PARE (Art. 110)",
+q:"Una señal octogonal roja con la palabra PARE obliga al conductor a:",
+options:["Reducir la velocidad a 30 km/h y continuar","Detenerse completamente antes de la línea de pare y verificar que la vía esté libre","Ceder el paso solo si hay peatones","Disminuir gradualmente la velocidad"],
+correct:1,
+explanation:"La señal PARE (stop) es reglamentaria y obliga a detención completa antes de la línea de pare. Continuar sin detenerse plenamente constituye infracción grave (Art. 131 literal D.4)."},
+
+{weight:'high',topic:"Semáforo en rojo (Art. 118, 131 D.4)",
+q:"No detenerse ante una luz roja de semáforo está sancionado con:",
+options:["8 SMLDV","15 SMLDV","30 SMLDV e inmovilización","Solo amonestación"],
+correct:2,
+explanation:"El Art. 131 literal D.4 sanciona con multa de 30 SMLDV no detenerse ante una luz roja o amarilla de semáforo, señal de PARE o semáforo intermitente en rojo."},
+
+{weight:'high',topic:"Cinturón de seguridad (Art. 82)",
+q:"El cinturón de seguridad es obligatorio para:",
+options:["Solo el conductor en vías nacionales","El conductor y pasajeros del asiento delantero en todas las vías","El conductor y todos los ocupantes en todas las vías del territorio nacional","Solo en vías de alta velocidad"],
+correct:2,
+explanation:"El Art. 82 establece que es obligatorio el uso del cinturón por el conductor y todos los ocupantes del vehículo en todas las vías del territorio nacional, incluyendo las urbanas."},
+
+{weight:'high',topic:"Vehículos de emergencia (Art. 64)",
+q:"Al escuchar sirenas de una ambulancia acercándose, el conductor debe:",
+options:["Acelerar para no obstruir","Continuar normalmente y ceder si puede","Orillarse al costado derecho de la calzada y detenerse","Detenerse en cualquier lugar de la vía"],
+correct:2,
+explanation:"El Art. 64 establece que todo conductor debe ceder el paso a los vehículos de emergencia orillándose al costado derecho de la calzada y deteniendo el movimiento del vehículo cuando anuncien su presencia."},
+
+{weight:'high',topic:"Suspensión de licencia (Art. 26)",
+q:"La licencia de conducción se CANCELA (no solo suspende) cuando:",
+options:["El conductor acumula 3 comparendos en un año","Hay reincidencia en conducir bajo embriaguez o imposibilidad permanente médica para conducir","El SOAT vence por más de 6 meses","El vehículo no pasa la revisión técnico-mecánica"],
+correct:1,
+explanation:"El Art. 26 establece como causales de cancelación: imposibilidad permanente física o mental para conducir, decisión judicial, muerte del titular, reincidencia en embriaguez o en prestar servicio público con vehículo particular."},
+
+{weight:'high',topic:"Adelantamiento prohibido (Art. 73)",
+q:"¿En cuál de estos lugares está PROHIBIDO adelantar a otro vehículo?",
+options:["En rectas largas con buena visibilidad","En curvas, pendientes, túneles, puentes y pasos a nivel","En vías de doble sentido con carril disponible","En zonas urbanas de 50 km/h"],
+correct:1,
+explanation:"El Art. 73 prohíbe adelantar en: intersecciones, tramos con línea continua, curvas o pendientes, visibilidad desfavorable, proximidades de pasos peatonales, intersecciones férrreas, por la berma o por la derecha, y en general cuando la maniobra ofrezca peligro."},
+
+{weight:'high',topic:"Reincidencia (Art. 124)",
+q:"Según la Ley 769/2002, se considera reincidencia:",
+options:["Cometer la misma infracción dos veces en toda la vida","Haber cometido más de una falta a las normas de tránsito en un período de seis meses","Tener tres comparendos en un año","No pagar una multa dentro de los 30 días"],
+correct:1,
+explanation:"El Art. 124 define reincidencia como haber cometido más de una falta a las normas de tránsito en un periodo de seis meses; en ese caso se suspende la licencia por seis meses."},
+
+{weight:'high',topic:"RCP y primeros auxilios",
+q:"Al encontrar en un accidente una víctima sin respiración ni pulso, lo correcto es:",
+options:["Darle agua para que reaccione","Iniciar RCP (30 compresiones + 2 ventilaciones) y llamar al 123","Moverla a un lugar más cómodo y esperar","Aplicarle alcohol en la frente"],
+correct:1,
+explanation:"Ante ausencia de respiración y pulso se debe iniciar RCP de inmediato y llamar al 123. Cada minuto sin circulación reduce drásticamente las posibilidades de supervivencia."},
+
+{weight:'high',topic:"Primeros auxilios",
+q:"En caso de hemorragia externa grave en una víctima de accidente, la medida inmediata es:",
+options:["Retirar cualquier objeto incrustado","Aplicar presión directa sobre la herida con un paño limpio","Sumergir la herida en agua fría","Administrar analgésicos orales"],
+correct:1,
+explanation:"La presión directa y sostenida sobre la herida con un paño limpio o gasa es la primera medida para controlar una hemorragia externa, mientras se activa el sistema de emergencias."},
+
+{weight:'high',topic:"Conducir sin licencia (Art. 131 D.1)",
+q:"Guiar un vehículo sin haber obtenido la licencia de conducción acarrea:",
+options:["Multa de 8 SMLDV","Multa de 15 SMLDV","Multa de 30 SMLDV e inmovilización del vehículo","Solo amonestación y curso vial"],
+correct:2,
+explanation:"El Art. 131 literal D.1 sanciona con multa de 30 SMLDV guiar un vehículo sin haber obtenido la licencia. Además, el vehículo es inmovilizado hasta que sea retirado por persona autorizada con licencia."},
+
+{weight:'high',topic:"Sentido contrario (Art. 131 D.3)",
+q:"Transitar en sentido contrario al estipulado para la vía está sancionado con:",
+options:["8 SMLDV","15 SMLDV","30 SMLDV","Amonestación"],
+correct:2,
+explanation:"El Art. 131 literal D.3 sanciona con 30 SMLDV transitar en sentido contrario al estipulado para la vía, calzada o carril."},
+
+{weight:'high',topic:"Maniobras peligrosas (Art. 131 D.7)",
+q:"Conducir realizando maniobras altamente peligrosas e irresponsables que pongan en peligro a personas o cosas está sancionado con:",
+options:["8 SMLDV","15 SMLDV","30 SMLDV","Solo inmovilización"],
+correct:2,
+explanation:"El Art. 131 literal D.7 sanciona con 30 SMLDV conducir realizando maniobras altamente peligrosas e irresponsables que pongan en peligro a las personas o las cosas."},
+
+{weight:'high',topic:"Velocidad en zona escolar (Arts. 74, 106)",
+q:"En zonas escolares y zonas residenciales, el límite máximo de velocidad es:",
+options:["20 km/h","30 km/h","40 km/h","50 km/h"],
+correct:1,
+explanation:"El Art. 106 establece que la velocidad en zonas escolares y residenciales será hasta de 30 km/h. El Art. 74 también ordena reducir a 30 km/h en lugares de concentración de personas."},
+
+{weight:'high',topic:"No ceder paso a peatón (Art. 131 C.32)",
+q:"No respetar el paso de peatones que cruzan una vía en sitio permitido está sancionado con:",
+options:["4 SMLDV","8 SMLDV","15 SMLDV","30 SMLDV"],
+correct:2,
+explanation:"El Art. 131 literal C.32 sanciona con 15 SMLDV no respetar el paso de peatones que cruzan en sitio permitido o no darles prelación en las franjas establecidas."},
+
+{weight:'high',topic:"Alcohol: prueba (Art. 150)",
+q:"Las autoridades de tránsito pueden solicitar al conductor la práctica de examen de embriaguez para verificar:",
+options:["Solo el nivel de alcohol en sangre","Si se encuentra bajo efectos del alcohol, drogas, estupefacientes, alucinógenos o hipnóticos","Solo el nivel de marihuana","El nivel de cansancio del conductor"],
+correct:1,
+explanation:"El Art. 150 establece que las autoridades pueden solicitar examen de embriaguez para determinar si el conductor está bajo efectos del alcohol, drogas o sustancias estupefacientes, alucinógenas o hipnóticas."},
+
+{weight:'high',topic:"Accidente: abandono (Art. 151)",
+q:"Quien cause lesiones u homicidio en accidente de tránsito y abandone injustificadamente el lugar de los hechos, además de las sanciones penales:",
+options:["Solo paga una multa de 30 SMLDV","Se hace acreedor a la suspensión de la licencia por 5 años","Pierde definitivamente la licencia de conducción","Debe pagar el 100% de los daños sin seguro"],
+correct:1,
+explanation:"El Art. 151 establece que quien cause lesiones u homicidio en accidente y abandone injustificadamente el lugar se hará acreedor a la suspensión de su licencia por 5 años, además de las sanciones del Código Penal."},
+
+{weight:'high',topic:"Luces exteriores (Art. 86)",
+q:"Los vehículos deben tener encendidas las luces exteriores:",
+options:["Solo de noche entre las 22:00 y las 5:00 horas","Desde las 18:00 hasta las 6:00 horas y cuando las condiciones de visibilidad sean adversas","Solo en carreteras nacionales","Solo cuando lo indique un agente de tránsito"],
+correct:1,
+explanation:"El Art. 86 establece que todo vehículo debe llevar encendidas las luces exteriores desde las 18:00 hasta las 6:00 horas del día siguiente, y cuando las condiciones de visibilidad sean adversas."},
+
+{weight:'high',topic:"Cinturones traseros (Art. 82)",
+q:"Los menores de cuántos años NO pueden viajar en el asiento delantero del vehículo?",
+options:["6 años","8 años","10 años","12 años"],
+correct:2,
+explanation:"El Art. 82 establece que los menores de 10 años no podrán viajar en el asiento delantero del vehículo."},
+
+{weight:'high',topic:"No permitir vehículo emergencia (Art. 131 D.9)",
+q:"No permitir el paso de los vehículos de emergencia está sancionado con:",
+options:["8 SMLDV","15 SMLDV","30 SMLDV","Solo amonestación"],
+correct:2,
+explanation:"El Art. 131 literal D.9 sanciona con 30 SMLDV no permitir el paso de los vehículos de emergencia."},
+
+{weight:'high',topic:"Suspensión licencia (Art. 26)",
+q:"¿En cuál de estos casos SE SUSPENDE (no cancela) la licencia de conducción?",
+options:["Por muerte del titular","Por decisión judicial que así lo ordene (suspensión)","Por imposibilidad permanente médica para conducir","Por reincidencia en embriaguez"],
+correct:1,
+explanation:"El Art. 26 distingue suspensión y cancelación. La suspensión procede por: disposición de autoridades por imposibilidad TRANSITORIA, decisión judicial, flagrante embriaguez, reincidencia en la misma norma en menos de un año, o prestar servicio público con vehículo particular."},
+
+// ══════════════════════════════════════
+// MEDIA — 2 pts (banco: 36 preguntas)
+// ══════════════════════════════════════
+{weight:'med',topic:"Señales preventivas (Art. 110)",
+q:"Las señales triangulares con borde rojo y fondo blanco son señales:",
+options:["Reglamentarias que indican una prohibición","Preventivas que advierten sobre un peligro o condición especial","Informativas de destinos y distancias","Transitorias de obras en la vía"],
+correct:1,
+explanation:"El Art. 110 clasifica las señales preventivas como aquellas que tienen por objeto advertir al usuario de la vía la existencia de un peligro y la naturaleza de éste."},
+
+{weight:'med',topic:"Señales reglamentarias (Art. 110)",
+q:"Las señales reglamentarias tienen por objeto:",
+options:["Advertir sobre peligros en la vía","Indicar limitaciones, prohibiciones o restricciones cuya violación es sancionable","Guiar al usuario proporcionando información","Modificar transitoriamente el régimen de la vía"],
+correct:1,
+explanation:"Según el Art. 110, las señales reglamentarias indican a los usuarios las limitaciones, prohibiciones o restricciones sobre el uso de la vía, y su violación constituye falta sancionable."},
+
+{weight:'med',topic:"Señales informativas (Art. 110)",
+q:"Las señales informativas tienen por objeto:",
+options:["Prohibir ciertas maniobras","Advertir sobre peligros","Identificar las vías y guiar al usuario proporcionando información que pueda necesitar","Modificar el régimen de velocidades"],
+correct:2,
+explanation:"El Art. 110 define las señales informativas como aquellas que tienen por objeto identificar las vías y guiar al usuario, proporcionándole la información que pueda necesitar."},
+
+{weight:'med',topic:"Prelación de señales (Art. 111)",
+q:"¿Cuál es el orden correcto de prelación de las señales de tránsito de mayor a menor?",
+options:["Semáforos → señales verticales → agentes de tránsito → marcas viales","Agentes de tránsito → señales transitorias → semáforos → señales verticales → señales horizontales","Señales verticales → semáforos → agentes → marcas viales","Marcas viales → semáforos → agentes → señales verticales"],
+correct:1,
+explanation:"El Art. 111 establece la prelación: 1) Señales y órdenes de agentes de tránsito, 2) Señales transitorias, 3) Semáforos, 4) Señales verticales, 5) Señales horizontales o marcas viales."},
+
+{weight:'med',topic:"Semáforos (Art. 118)",
+q:"La luz AMARILLA del semáforo indica:",
+options:["Vía libre para continuar","Detenerse obligatoriamente igual que el rojo","Atención para cambio de luces; no iniciar marcha ni incrementar velocidad","Que se puede continuar con precaución"],
+correct:2,
+explanation:"El Art. 118 establece que la luz amarilla indica atención para cambio de luces, que el cruce sea desalojado, y que no debe iniciarse la marcha ni incrementarse la velocidad en ese lapso."},
+
+{weight:'med',topic:"Semáforos (Art. 118)",
+q:"La luz intermitente ROJA del semáforo se asimila a:",
+options:["Señal de ceda el paso","Señal de PARE","Luz amarilla intermitente","Una señal informativa"],
+correct:1,
+explanation:"El Art. 118 establece expresamente que la señal intermitente roja se asimila a una señal de PARE."},
+
+{weight:'med',topic:"Límite velocidad urbano (Art. 106)",
+q:"En vías urbanas, la velocidad máxima general que no puede sobrepasar ningún vehículo es:",
+options:["30 km/h","50 km/h","80 km/h","100 km/h"],
+correct:1,
+explanation:"El Art. 106 establece que en vías urbanas en ningún caso la velocidad podrá sobrepasar los 50 km/h, salvo señalización diferente de la autoridad competente."},
+
+{weight:'med',topic:"Límite velocidad carretera (Art. 107)",
+q:"En carreteras nacionales y departamentales, la velocidad máxima general es:",
+options:["80 km/h","90 km/h","100 km/h","120 km/h"],
+correct:1,
+explanation:"El Art. 107 establece que en carreteras nacionales y departamentales en ningún caso se podrá sobrepasar los 90 km/h. Para vías doble calzada sin pasos peatonales puede ser hasta 120 km/h."},
+
+{weight:'med',topic:"Distancia de seguimiento (Art. 108)",
+q:"Para velocidades entre 60 y 80 km/h, la distancia mínima de seguimiento entre vehículos es:",
+options:["10 metros","20 metros","25 metros","30 metros"],
+correct:2,
+explanation:"El Art. 108 establece distancias según velocidad: hasta 30 km/h → 10 m; 30-60 km/h → 20 m; 60-80 km/h → 25 m; más de 80 km/h → 30 m."},
+
+{weight:'med',topic:"Distancia de seguimiento (Art. 108)",
+q:"Para velocidades de hasta 30 km/h, la distancia mínima de seguimiento es:",
+options:["5 metros","10 metros","15 metros","20 metros"],
+correct:1,
+explanation:"El Art. 108 establece que para velocidades de hasta 30 km/h la distancia mínima de seguimiento entre vehículos es de 10 metros."},
+
+{weight:'med',topic:"Señales del conductor (Art. 67)",
+q:"Para indicar reducción de velocidad o detención del vehículo mediante señal manual, el conductor saca:",
+options:["El brazo izquierdo extendido horizontalmente","El brazo izquierdo en escuadra con la mano hacia arriba","El brazo izquierdo en escuadra con la mano hacia abajo","El brazo derecho extendido"],
+correct:2,
+explanation:"El Art. 67 establece que para indicar reducción de velocidad o detención, se saca el brazo izquierdo formando escuadra con la mano hacia abajo."},
+
+{weight:'med',topic:"Señales del conductor (Art. 67)",
+q:"Para indicar un cruce o cambio de carril a la derecha mediante señal manual, el conductor:",
+options:["Extiende el brazo derecho horizontalmente","Saca el brazo izquierdo en escuadra con la mano hacia arriba","Saca el brazo izquierdo en escuadra con la mano hacia abajo","Extiende el brazo izquierdo horizontalmente"],
+correct:1,
+explanation:"El Art. 67 establece que para indicar cruce a la derecha o cambio de carril, se saca el brazo izquierdo formando escuadra con la mano hacia arriba."},
+
+{weight:'med',topic:"Carriles (Art. 68)",
+q:"En una vía de doble sentido con dos carriles, los vehículos deben circular por:",
+options:["El carril izquierdo siempre","El carril derecho, usando el izquierdo solo para adelantar","Cualquier carril libremente","El carril central"],
+correct:1,
+explanation:"El Art. 68 establece que en vías de doble sentido de dos carriles, los vehículos circularán por el carril derecho y usarán el izquierdo con precaución solo para maniobras de adelantamiento."},
+
+{weight:'med',topic:"Reducción de velocidad (Art. 74)",
+q:"Los conductores deben reducir la velocidad a 30 km/h cuando:",
+options:["Ven una señal verde","Circulan por autopista","Se aproximan a una intersección, zonas escolares o de concentración de personas","Llevan carga liviana"],
+correct:2,
+explanation:"El Art. 74 ordena reducir a 30 km/h en: lugares de concentración de personas, zonas escolares, cuando se reduzca la visibilidad, cuando las señales lo ordenen, y al aproximarse a una intersección."},
+
+{weight:'med',topic:"Estacionamiento prohibido (Art. 76)",
+q:"¿En cuál de estos lugares está PROHIBIDO estacionar?",
+options:["En vías secundarias a más de 5 metros de una intersección","Frente a hidrantes, en doble fila, o en pasos peatonales","En zonas residenciales durante el día","En vías de doble sentido con dos carriles"],
+correct:1,
+explanation:"El Art. 76 prohíbe estacionar frente a hidrantes, en doble fila, en pasos peatonales, en curvas, en puentes y viaductos, en zonas verdes, en autopistas, entre otros."},
+
+{weight:'med',topic:"Luces en zona urbana (Art. 86)",
+q:"Dentro del perímetro urbano, ¿qué tipo de luz debe usar el vehículo?",
+options:["Luz plena o alta siempre","Luz baja o media","Luces de emergencia","Ninguna si hay iluminación pública"],
+correct:1,
+explanation:"El Art. 86 establece que dentro del perímetro urbano se usará la luz media (baja). La luz plena o alta solo se permite fuera del perímetro urbano, excepto cuando se aproxime un vehículo en sentido contrario."},
+
+{weight:'med',topic:"Comparendo (Arts. 2, 135)",
+q:"El comparendo es:",
+options:["El certificado de revisión técnico-mecánica","La orden formal de notificación para que el presunto contraventor se presente ante la autoridad de tránsito","La multa en dinero impuesta en el sitio","El documento que acredita el pago de la infracción"],
+correct:1,
+explanation:"El Art. 2 define el comparendo como la orden formal de notificación para que el presunto contraventor o implicado se presente ante la autoridad de tránsito por la comisión de una infracción."},
+
+{weight:'med',topic:"Reducción de multa (Art. 136)",
+q:"Si el infractor acepta la infracción y paga dentro de los 5 días siguientes al comparendo asistiendo al curso de normas de tránsito, paga:",
+options:["El 100% de la multa","El 75% de la multa","El 50% de la multa","El 25% de la multa"],
+correct:2,
+explanation:"El Art. 136 establece que el infractor puede cancelar el 50% de la multa dentro de los 5 días siguientes, siempre y cuando asista obligatoriamente a un curso sobre normas de tránsito."},
+
+{weight:'med',topic:"Inmovilización (Arts. 2, 125)",
+q:"La inmovilización de un vehículo consiste en:",
+options:["La cancelación definitiva de la licencia de tránsito","La suspensión temporal de la circulación del vehículo por las vías","El embargo del vehículo por deudas","El cambio obligatorio de placas"],
+correct:1,
+explanation:"El Art. 2 define inmovilización como la suspensión temporal de la circulación de un vehículo. El Art. 125 precisa que el vehículo es conducido a parqueaderos autorizados hasta que se subsane la causa."},
+
+{weight:'med',topic:"Tipos de sanciones (Art. 122)",
+q:"Las sanciones por infracciones al Código de Tránsito incluyen:",
+options:["Solo multas económicas","Amonestación, multa, suspensión de licencia, inmovilización y cancelación de licencia, entre otras","Solo suspensión e inmovilización","Arrestos de 1 a 30 días"],
+correct:1,
+explanation:"El Art. 122 enumera los tipos de sanciones: amonestación, multa, suspensión de la licencia, suspensión o cancelación del permiso, inmovilización, retención preventiva y cancelación definitiva de la licencia."},
+
+{weight:'med',topic:"RUNT (Art. 8)",
+q:"El RUNT incorpora entre otros los siguientes registros:",
+options:["Solo el registro de vehículos y conductores","Automotores, conductores, empresas de transporte, licencias, infracciones, accidentes, seguros y más","Solo el registro de infracciones y accidentes","Solo el registro de licencias de conducción"],
+correct:1,
+explanation:"El Art. 8 establece que el RUNT incorpora al menos 10 registros: automotores, conductores, empresas de transporte, licencias de tránsito, infracciones, centros de enseñanza, seguros, personas del sector, remolques y accidentes."},
+
+{weight:'med',topic:"Licencia de conducción (Art. 22)",
+q:"La licencia de conducción para vehículos particulares tiene una vigencia:",
+options:["De 5 años","De 10 años","Indefinida","De 3 años renovables"],
+correct:2,
+explanation:"El Art. 22 establece que las licencias de conducción para vehículos particulares tendrán una vigencia indefinida. Solo las de servicio público tienen vigencia de 3 años."},
+
+{weight:'med',topic:"Licencia de conducción (Art. 19)",
+q:"Para obtener por primera vez la licencia de conducción para vehículos particulares se requiere:",
+options:["Solo aprobar el examen teórico","Tener 18 años, aprobar examen teórico-práctico, certificado del CEA y certificado médico del CRC","Tener 16 años, certificado del CEA, certificado médico del CRC y aprobar examen teórico-práctico","Solo el certificado del CEA y la cédula"],
+correct:2,
+explanation:"El Art. 19 exige para vehículos particulares: saber leer y escribir, tener 16 años cumplidos, aprobar examen teórico y práctico, certificado de capacitación del CEA y certificado de aptitud física y mental del CRC."},
+
+{weight:'med',topic:"SOAT (Art. 42)",
+q:"Para transitar en el territorio nacional todos los vehículos deben estar amparados por:",
+options:["Un seguro de responsabilidad civil voluntario","Un seguro obligatorio de accidentes de tránsito (SOAT) vigente","Una póliza de daños a terceros","El registro en el RUNT únicamente"],
+correct:1,
+explanation:"El Art. 42 establece que para poder transitar en el territorio nacional todos los vehículos deben estar amparados por un seguro obligatorio vigente (SOAT)."},
+
+{weight:'med',topic:"RTM (Art. 51)",
+q:"La revisión técnico-mecánica verifica, entre otros aspectos:",
+options:["Solo las emisiones de gases contaminantes","Estado de carrocería, emisiones, sistema mecánico, sistema eléctrico, frenos, llantas y elementos de seguridad","Solo el sistema de frenos y luces","Solo las condiciones externas del vehículo"],
+correct:1,
+explanation:"El Art. 51 establece que la revisión verifica: estado de carrocería, niveles de emisión de gases, sistema mecánico, sistema eléctrico y óptico, eficiencia de combustión, elementos de seguridad, frenos, llantas y puerta de emergencia."},
+
+{weight:'med',topic:"RTM primera vez (Art. 52)",
+q:"Los vehículos nuevos de servicio particular (diferentes de motos) se someten a la primera RTM:",
+options:["Al año de matriculados","A los 3 años de matriculados","A los 5 años de matriculados","A los 2 años de matriculados"],
+correct:2,
+explanation:"El Art. 52 establece que los vehículos nuevos de servicio particular (no motos) se someten a la primera revisión técnico-mecánica a partir del quinto año contado desde su matrícula."},
+
+{weight:'med',topic:"RTM motos (Art. 52)",
+q:"Las motocicletas nuevas se someten a la primera RTM:",
+options:["Al año de matriculadas","A los 2 años de matriculadas","A los 3 años de matriculadas","A los 5 años de matriculadas"],
+correct:1,
+explanation:"El Art. 52 establece que los vehículos de servicio público y las motocicletas y similares se someten a la primera revisión técnico-mecánica al cumplir 2 años contados desde su matrícula."},
+
+{weight:'med',topic:"Equipo de carretera (Art. 30)",
+q:"¿Cuál de estos elementos NO es parte del equipo de carretera obligatorio según el Art. 30?",
+options:["Botiquín de primeros auxilios","Extintor","Dos señales de carretera reflectivas triangulares","Paraguas o impermeable"],
+correct:3,
+explanation:"El Art. 30 establece el equipo obligatorio: gato, cruceta, dos señales reflectivas triangulares, botiquín, extintor, dos tacos, caja de herramienta básica, llanta de repuesto y linterna. El paraguas no está incluido."},
+
+{weight:'med',topic:"Motocicletas (Art. 96)",
+q:"Las motocicletas deben transitar con las luces delanteras y traseras:",
+options:["Solo de noche","Solo en condiciones de lluvia o niebla","En todo momento mientras transiten por vías de uso público","Solo cuando lo exija el agente de tránsito"],
+correct:2,
+explanation:"El Art. 96 numeral 4 establece que todo el tiempo que las motocicletas transiten por las vías de uso público deben hacerlo con las luces delanteras y traseras encendidas."},
+
+{weight:'med',topic:"Casco (Art. 94)",
+q:"La no utilización del casco de seguridad cuando corresponda da lugar a:",
+options:["Solo una amonestación verbal","Multa de 4 SMLDV","La inmovilización del vehículo","Suspensión de la licencia por 3 meses"],
+correct:2,
+explanation:"El Art. 94 establece que la no utilización del casco de seguridad cuando corresponda dará lugar a la inmovilización del vehículo."},
+
+{weight:'med',topic:"Ciclistas (Art. 95)",
+q:"Las bicicletas cuando circulen en horas nocturnas deben llevar:",
+options:["Solo chaleco reflectivo","Dispositivos de luz blanca delantera y reflectores de luz roja trasera","Solo luces de emergencia","Nada, basta con el chaleco reflectivo del conductor"],
+correct:1,
+explanation:"El Art. 95 numeral 5 establece que cuando circulen en horas nocturnas, las bicicletas deben llevar dispositivos en la parte delantera que proyecten luz blanca y en la parte trasera que reflecte luz roja."},
+
+{weight:'med',topic:"No usar cinturón (Art. 131 C.6)",
+q:"La infracción por no utilizar el cinturón de seguridad está sancionada con:",
+options:["4 SMLDV","8 SMLDV","15 SMLDV","30 SMLDV"],
+correct:2,
+explanation:"El Art. 131 literal C.6 sanciona con 15 SMLDV no utilizar el cinturón de seguridad por parte de los ocupantes del vehículo."},
+
+{weight:'med',topic:"Uso de celular (Art. 131 C.38)",
+q:"Usar el teléfono celular al conducir sin manos libres está sancionado con:",
+options:["4 SMLDV","8 SMLDV","15 SMLDV","30 SMLDV"],
+correct:2,
+explanation:"El Art. 131 literal C.38 sanciona con 15 SMLDV usar sistemas móviles de comunicación o teléfonos al momento de conducir, exceptuando si se utilizan con accesorios que permitan tener las manos libres."},
+
+{weight:'med',topic:"Placas (Art. 45)",
+q:"¿Cuántas placas deben llevar los vehículos automotores (excepto motos)?",
+options:["Una sola, en la parte trasera","Dos iguales: una delantera y una trasera","Una delantera y dos traseras","Las que determine el organismo de tránsito local"],
+correct:1,
+explanation:"El Art. 45 establece que los vehículos automotores llevarán dos placas iguales: una en el extremo delantero y otra en el extremo trasero."},
+
+// ══════════════════════════════════════
+// BAJA — 0.5 pts (banco: 20 preguntas)
+// ══════════════════════════════════════
+{weight:'low',topic:"Definición: andén (Art. 2)",
+q:"Según el Art. 2 de la Ley 769/2002, la acera o andén es:",
+options:["La zona de la vía destinada a la circulación de vehículos","Franja longitudinal de la vía urbana destinada exclusivamente a la circulación de peatones","La zona de transición entre calzada y andén para estacionar vehículos","El espacio entre dos carriles de la calzada"],
+correct:1,
+explanation:"El Art. 2 define la acera o andén como la franja longitudinal de la vía urbana, destinada exclusivamente a la circulación de peatones, ubicada a los costados de ésta."},
+
+{weight:'low',topic:"Definición: bahía (Art. 2)",
+q:"Según el Art. 2, la bahía de estacionamiento es:",
+options:["Un carril exclusivo para buses","La parte complementaria de la vía usada como zona de transición entre la calzada y el andén para estacionar vehículos","Un tipo de glorieta pequeña","El separador entre dos calzadas"],
+correct:1,
+explanation:"El Art. 2 define bahía de estacionamiento como la parte complementaria de la estructura de la vía utilizada como zona de transición entre la calzada y el andén, destinada al estacionamiento de vehículos."},
+
+{weight:'low',topic:"Definición: calzada (Art. 2)",
+q:"Según el Art. 2, la calzada es:",
+options:["La franja para peatones a los costados de la vía","El espacio estrecho que separa dos calzadas","La zona de la vía destinada a la circulación de vehículos","El carril exclusivo para transporte masivo"],
+correct:2,
+explanation:"El Art. 2 define calzada como la zona de la vía destinada a la circulación de vehículos."},
+
+{weight:'low',topic:"Definición: bocacalle (Art. 2)",
+q:"Según el Art. 2, la bocacalle es:",
+options:["El nombre del carril de emergencia en autopistas","La embocadura de una calle en una intersección","Un tipo de señal preventiva","El área de parqueo frente a un establecimiento"],
+correct:1,
+explanation:"El Art. 2 define bocacalle como la embocadura de una calle en una intersección."},
+
+{weight:'low',topic:"Definición: separador (Art. 2)",
+q:"Según el Art. 2, el separador es:",
+options:["La línea amarilla pintada sobre la calzada","El espacio estrecho y saliente que independiza dos calzadas de una vía","El área de parqueo entre dos carriles","La franja peatonal entre andén y calzada"],
+correct:1,
+explanation:"El Art. 2 define separador como el espacio estrecho y saliente que independiza dos calzadas de una vía."},
+
+{weight:'low',topic:"Definición: glorieta (Art. 2)",
+q:"Según el Art. 2, la glorieta es:",
+options:["Una señal preventiva de cruce peligroso","Una intersección donde no hay cruces directos sino maniobras de entrecruzamiento alrededor de una isleta central","Un tipo de semáforo especial","El nombre del carril de alta velocidad"],
+correct:1,
+explanation:"El Art. 2 define glorieta como la intersección donde no hay cruces directos sino maniobras de entrecruzamientos y movimientos alrededor de una isleta o plazoleta central."},
+
+{weight:'low',topic:"Definición: prelación (Art. 2)",
+q:"Según el Art. 2, la prelación es:",
+options:["La multa aplicada a quien no cede el paso","La prioridad o preferencia que tiene una vía o vehículo respecto a otras vías u otros vehículos","El derecho a circular a mayor velocidad","El nombre del carril de emergencia"],
+correct:1,
+explanation:"El Art. 2 define prelación como la prioridad o preferencia que tiene una vía o vehículo con respecto a otras vías u otros vehículos."},
+
+{weight:'low',topic:"Definición: infracción (Art. 2)",
+q:"Según el Art. 2, la infracción es COMPLEJA cuando:",
+options:["Se viola por primera vez una norma de tránsito","Se produce un daño material además de la violación a la norma","Solo se viola la mera norma sin daños","El infractor no tiene licencia de conducción"],
+correct:1,
+explanation:"El Art. 2 establece que la infracción será compleja si se produce un daño material (además de la violación a la norma). Será simple cuando se trate de violación a la mera norma."},
+
+{weight:'low',topic:"Definición: vía (Art. 2)",
+q:"Según el Art. 2, la vía es:",
+options:["Solo la calzada de uso exclusivo para vehículos","Zona de uso público o privado, abierta al público, destinada al tránsito de vehículos, personas y animales","La autopista de doble calzada","Solo las carreteras nacionales"],
+correct:1,
+explanation:"El Art. 2 define vía como la zona de uso público o privado, abierta al público, destinada al tránsito de vehículos, personas y animales."},
+
+{weight:'low',topic:"Definición: licencia de conducción (Art. 2)",
+q:"La licencia de conducción es:",
+options:["Un documento transferible a familiares directos","Un documento público, personal e intransferible expedido por autoridad competente que autoriza a conducir vehículos","Un documento solo válido en el municipio donde fue expedida","Una tarjeta de identificación sin validez legal en carreteras"],
+correct:1,
+explanation:"El Art. 2 define la licencia de conducción como el documento público de carácter personal e intransferible expedido por autoridad competente, que autoriza a una persona para la conducción de vehículos con validez en todo el territorio nacional."},
+
+{weight:'low',topic:"Definición: multa (Art. 2)",
+q:"Para efectos del Código de Tránsito, la multa se entiende en:",
+options:["Salarios mínimos mensuales legales vigentes (SMMLV)","Salarios mínimos diarios legales vigentes (SMLDV)","Unidades de Valor Tributario (UVT)","Porcentaje del valor del vehículo"],
+correct:1,
+explanation:"El Art. 2 establece que para efectos del código y salvo disposición en contrario, la multa debe entenderse en salarios mínimos diarios legales vigentes (SMLDV)."},
+
+{weight:'low',topic:"Sanción RTM (Art. 131 C.35)",
+q:"No realizar la revisión técnico-mecánica en el plazo legal establecido está sancionado con:",
+options:["4 SMLDV","8 SMLDV","15 SMLDV e inmovilización","30 SMLDV"],
+correct:2,
+explanation:"El Art. 131 literal C.35 sanciona con 15 SMLDV no realizar la revisión técnico-mecánica en el plazo legal, o cuando el vehículo no esté en adecuadas condiciones técnico-mecánicas. Además el vehículo es inmovilizado."},
+
+{weight:'low',topic:"Sanción SOAT (Art. 131 D.2)",
+q:"Conducir sin portar los seguros ordenados por la ley (SOAT) está sancionado con:",
+options:["8 SMLDV","15 SMLDV","30 SMLDV e inmovilización del vehículo","Solo amonestación"],
+correct:2,
+explanation:"El Art. 131 literal D.2 sanciona con 30 SMLDV conducir sin portar los seguros ordenados por la ley. Además, el vehículo será inmovilizado."},
+
+{weight:'low',topic:"Licencia de tránsito (Art. 2)",
+q:"La licencia de tránsito es:",
+options:["Lo mismo que la licencia de conducción","El documento público que identifica un vehículo automotor, acredita su propiedad y lo autoriza para circular","El permiso temporal para conducir un vehículo ajeno","El seguro obligatorio del vehículo"],
+correct:1,
+explanation:"El Art. 2 define la licencia de tránsito como el documento público que identifica un vehículo automotor, acredita su propiedad e identifica a su propietario y autoriza a dicho vehículo para circular por las vías."},
+
+{weight:'low',topic:"Equipo de carretera (Art. 30)",
+q:"Entre los elementos del equipo de carretera obligatorio del Art. 30 se incluye:",
+options:["GPS de navegación","Dos tacos para bloquear el vehículo y una linterna","Cámara de video y silla infantil","Casco para el conductor"],
+correct:1,
+explanation:"El Art. 30 incluye entre los elementos obligatorios del equipo de carretera: dos tacos para bloquear el vehículo y linterna, además de gato, cruceta, señales reflectivas triangulares, botiquín, extintor, herramienta básica y llanta de repuesto."},
+
+{weight:'low',topic:"Automóvil antiguo (Art. 2)",
+q:"Según el Art. 2, un automóvil antiguo es aquel que:",
+options:["Tiene más de 20 años y está en mal estado","Ha cumplido 35 años y conserva sus especificaciones originales","Ha cumplido 50 años y está catalogado internacionalmente como clásico","Tiene más de 10 años sin revisión técnica"],
+correct:1,
+explanation:"El Art. 2 define automóvil antiguo como el automotor que haya cumplido 35 años y que conserve sus especificaciones y características originales de fábrica, presentación y funcionamiento."},
+
+{weight:'low',topic:"Zona escolar (Art. 2)",
+q:"Según el Art. 2, la zona escolar comprende:",
+options:["Solo el frente del establecimiento educativo","La parte de la vía frente al establecimiento de enseñanza y que se extiende 50 metros al frente y a los lados del mismo","Un radio de 200 metros alrededor de la institución","Solo el área del parqueadero del colegio"],
+correct:1,
+explanation:"El Art. 2 define zona escolar como la parte de la vía situada frente a un establecimiento de enseñanza y que se extiende 50 metros al frente y a los lados del límite del establecimiento."},
+
+{weight:'low',topic:"Línea de emergencias",
+q:"El número de emergencias unificado en Colombia al que se debe llamar en caso de accidente es:",
+options:["119","123","112","911"],
+correct:1,
+explanation:"El número de emergencias unificado en Colombia es el 123, que coordina la atención de policía, bomberos y ambulancias en todo el territorio nacional."},
+
+{weight:'low',topic:"Amonestación (Art. 123)",
+q:"La amonestación como sanción de tránsito consiste en:",
+options:["Una multa reducida de 2 SMLDV","La asistencia obligatoria a cursos de educación vial","La suspensión temporal de la licencia por 15 días","Una advertencia verbal sin registro"],
+correct:1,
+explanation:"El Art. 123 define la amonestación como la asistencia a cursos obligatorios de educación vial. El infractor que incumpla la citación al curso será sancionado con multa de 5 SMLDV."},
+
+{weight:'low',topic:"Definición: alcoholemia (Art. 2)",
+q:"Según el Art. 2, la alcoholemia es:",
+options:["La prueba de laboratorio que detecta alcohol en orina","La cantidad de alcohol que tiene una persona en determinado momento en su sangre","El dispositivo para medir alcohol en aire exhalado","El examen que determina el nivel de alcohol en la orina"],
+correct:1,
+explanation:"El Art. 2 define alcoholemia como la cantidad de alcohol que tiene una persona en determinado momento en su sangre. El alcohosensor mide el alcohol en el aire exhalado y la alcoholuria en la orina."},
+
+];
+
+// ── State
+let current=0,score=0,maxScore=0,answered=[],activeQuestions=[];
+const mainEl=document.getElementById('main');
+const progressWrap=document.getElementById('progress-wrap');
+const progressFill=document.getElementById('progressFill');
+const progressText=document.getElementById('progressText');
+const qScoreText=document.getElementById('qScoreText');
+const scoreBarFill=document.getElementById('scoreBarFill');
+const scoreBarLabel=document.getElementById('scoreBarLabel');
+
+document.getElementById('startBtn').addEventListener('click',startQuiz);
+
+function shuffle(arr){
+  const a=arr.slice();
+  for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
+  return a;
+}
+
+function buildPool(){
+  const high=shuffle(allQuestions.filter(q=>q.weight==='high')).slice(0,10);
+  const med =shuffle(allQuestions.filter(q=>q.weight==='med')).slice(0,20);
+  const low =shuffle(allQuestions.filter(q=>q.weight==='low')).slice(0,10);
+  return shuffle([...high,...med,...low]).map(q=>{
+    const order=shuffle(q.options.map((_,i)=>i));
+    return{weight:q.weight,topic:q.topic,q:q.q,
+      options:order.map(i=>q.options[i]),
+      correct:order.indexOf(q.correct),
+      explanation:q.explanation};
+  });
+}
+
+function startQuiz(){
+  current=0;score=0;answered=[];
+  activeQuestions=buildPool();
+  maxScore=activeQuestions.reduce((s,q)=>s+WEIGHTS[q.weight],0);
+  progressWrap.style.display='block';
+  renderQuestion();
+}
+
+function updateScoreBar(){
+  const pct=maxScore>0?(score/maxScore*100):0;
+  scoreBarFill.style.width=pct+'%';
+  scoreBarLabel.textContent=score.toFixed(1)+' / '+maxScore.toFixed(1)+' pts';
+}
+
+function renderQuestion(){
+  const total=activeQuestions.length;
+  progressFill.style.width=(current/total*100)+'%';
+  progressText.textContent=`Pregunta ${current+1} de ${total}`;
+  const item=activeQuestions[current];
+  const pts=WEIGHTS[item.weight];
+  const wLabel=item.weight==='high'?'Alta':item.weight==='med'?'Media':'Baja';
+  qScoreText.textContent=`Vale ${pts} pts`;
+  updateScoreBar();
+  const optHtml=item.options.map((opt,i)=>{
+    const l=String.fromCharCode(65+i);
+    return `<button class="option" data-index="${i}"><span class="letter">${l}</span><span>${opt}</span></button>`;
+  }).join('');
+  mainEl.innerHTML=`
+    <div class="card">
+      <div><div class="topic-tag">${item.topic}</div><span class="weight-badge ${item.weight}">${wLabel} · ${pts} pts</span></div>
+      <div class="question">${item.q}</div>
+      <div class="options" id="optCont">${optHtml}</div>
+      <div class="pts-feedback" id="ptsFeedback"></div>
+      <div class="explanation" id="expBox">${item.explanation}</div>
+      <div class="nav"><button class="btn" id="nextBtn" disabled>${current===total-1?'Ver resultados':'Siguiente'}</button></div>
+    </div>`;
+  document.querySelectorAll('.option').forEach(btn=>btn.addEventListener('click',()=>selectOption(btn,item)));
+  document.getElementById('nextBtn').addEventListener('click',nextQuestion);
+}
+
+function selectOption(btn,item){
+  if(answered[current]!==undefined)return;
+  const chosen=parseInt(btn.dataset.index),correct=item.correct,pts=WEIGHTS[item.weight];
+  answered[current]=chosen;
+  document.querySelectorAll('.option').forEach(o=>{
+    o.disabled=true;
+    const idx=parseInt(o.dataset.index);
+    if(idx===correct)o.classList.add('correct');
+    if(idx===chosen&&chosen!==correct)o.classList.add('incorrect');
+  });
+  const fb=document.getElementById('ptsFeedback');
+  if(chosen===correct){
+    score+=pts;
+    fb.textContent=`✅ Correcto · +${pts} pts`;
+    fb.className='pts-feedback correct show';
+  }else{
+    fb.textContent=`❌ Incorrecto · +0 pts (correcta: ${String.fromCharCode(65+correct)})`;
+    fb.className='pts-feedback incorrect show';
+  }
+  updateScoreBar();
+  document.getElementById('expBox').classList.add('show');
+  document.getElementById('nextBtn').disabled=false;
+}
+
+function nextQuestion(){
+  if(current<activeQuestions.length-1){current++;renderQuestion();}
+  else showResults();
+}
+
+// ── CONFETTI ──────────────────────────────────────────────
+function launchConfetti(){
+  const canvas=document.createElement('canvas');
+  canvas.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9999;';
+  document.body.appendChild(canvas);
+  const ctx=canvas.getContext('2d');
+  canvas.width=window.innerWidth;
+  canvas.height=window.innerHeight;
+
+  const COLORS=['#ffc72c','#2e8b57','#ffffff','#e05a2b','#5b8dd9','#f4f1e8'];
+  const pieces=Array.from({length:140},()=>({
+    x:Math.random()*canvas.width,
+    y:-20-Math.random()*200,
+    r:4+Math.random()*6,
+    d:2+Math.random()*3,
+    color:COLORS[Math.floor(Math.random()*COLORS.length)],
+    tilt:Math.random()*10-5,
+    tiltSpeed:0.08+Math.random()*0.1,
+    angle:0,
+    shape:Math.random()>0.5?'rect':'circle'
+  }));
+
+  let frame=0;
+  function draw(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    pieces.forEach(p=>{
+      p.angle+=p.tiltSpeed;
+      p.tilt=Math.sin(p.angle)*12;
+      p.y+=p.d+(frame*0.01);
+      p.x+=Math.sin(p.angle)*0.8;
+      ctx.fillStyle=p.color;
+      ctx.beginPath();
+      if(p.shape==='circle'){
+        ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      } else {
+        ctx.save();
+        ctx.translate(p.x,p.y);
+        ctx.rotate(p.tilt*Math.PI/180);
+        ctx.fillRect(-p.r,-p.r/2,p.r*2,p.r);
+        ctx.restore();
+        return ctx.fill();
+      }
+      ctx.fill();
+    });
+    frame++;
+    if(frame<220) requestAnimationFrame(draw);
+    else { canvas.style.opacity='0'; canvas.style.transition='opacity 0.5s'; setTimeout(()=>canvas.remove(),600); }
+  }
+  draw();
+}
+
+// ── RESULTS ───────────────────────────────────────────────
+function showResults(){
+  const total=activeQuestions.length;
+  progressFill.style.width='100%';
+  progressText.textContent=`Completado: ${total} de ${total}`;
+  const pct=score/maxScore*100,threshold=maxScore*0.9,passed=score>=threshold;
+
+  const correct_count=answered.filter((a,i)=>a===activeQuestions[i].correct).length;
+  const wrong_count=total-correct_count;
+
+  // Build detailed review cards — wrong first, then correct
+  const wrongItems=[], rightItems=[];
+  activeQuestions.forEach((q,i)=>{
+    const ok=answered[i]===q.correct;
+    const pts=WEIGHTS[q.weight];
+    const wLabel=q.weight==='high'?'Alta':q.weight==='med'?'Media':'Baja';
+    const userLetter=String.fromCharCode(65+answered[i]);
+    const correctLetter=String.fromCharCode(65+q.correct);
+    const card=`
+      <div class="res-card ${ok?'res-right':'res-wrong'}">
+        <div class="res-card-header">
+          <span class="res-icon">${ok?'✅':'❌'}</span>
+          <span class="res-topic">${q.topic}</span>
+          <span class="res-badge ${q.weight}">${wLabel} · ${pts}pts</span>
+        </div>
+        <div class="res-question">${i+1}. ${q.q}</div>
+        ${!ok?`<div class="res-answer wrong-ans">Tu respuesta: <strong>${userLetter}. ${q.options[answered[i]]}</strong></div>`:''}
+        <div class="res-answer correct-ans">Respuesta correcta: <strong>${correctLetter}. ${q.options[q.correct]}</strong></div>
+        <div class="res-explanation">${q.explanation}</div>
+      </div>`;
+    ok ? rightItems.push(card) : wrongItems.push(card);
+  });
+
+  mainEl.innerHTML=`
+    <div class="results-screen">
+
+      <!-- Verdict hero -->
+      <div class="verdict-hero ${passed?'verdict-pass':'verdict-fail'}">
+        <div class="verdict-icon">${passed?'🏆':'📋'}</div>
+        <div class="verdict-score">${score.toFixed(1)}<span class="verdict-max"> / ${maxScore}</span></div>
+        <div class="verdict-label">${passed?'¡Aprobado!':'No aprobado'}</div>
+        <div class="verdict-pct">${pct.toFixed(1)}% · Mínimo requerido: 90% (${threshold.toFixed(1)} pts)</div>
+        <div class="verdict-chips">
+          <div class="vchip vchip-green">✅ ${correct_count} correctas</div>
+          <div class="vchip vchip-red">❌ ${wrong_count} incorrectas</div>
+        </div>
+      </div>
+
+      <!-- Summary body -->
+      <div class="results-body">
+        <button class="restart-btn" id="restartBtn">↩ Repetir simulacro</button>
+
+        ${wrongItems.length>0?`
+        <div class="res-section-title res-title-wrong">❌ Fallaste ${wrong_count} pregunta${wrong_count!==1?'s':''}</div>
+        ${wrongItems.join('')}
+        `:'<div class="res-section-title res-title-right" style="margin-top:0">¡Cero errores! Perfecto.</div>'}
+
+        ${rightItems.length>0?`
+        <div class="res-section-title res-title-right">✅ Acertaste ${correct_count} pregunta${correct_count!==1?'s':''}</div>
+        ${rightItems.join('')}
+        `:''}
+
+        <button class="restart-btn" id="restartBtn2" style="margin-top:8px;">↩ Repetir simulacro</button>
+      </div>
+    </div>`;
+
+  updateScoreBar();
+  document.getElementById('restartBtn').addEventListener('click',startQuiz);
+  document.getElementById('restartBtn2').addEventListener('click',startQuiz);
+  if(passed) setTimeout(launchConfetti,300);
+}
+</script>
+</body>
+</html>
