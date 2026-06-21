@@ -24,21 +24,11 @@ const rows = WEIGHT_ORDER.map((weight) => ({
 ---
 
 <div class="start-screen" id="startScreen">
-  <section class="hero" aria-labelledby="start-title">
-    <div class="hero-copy">
-      <div class="hero-eyebrow">Puesto de control · A2, B1 y C1</div>
-      <h2 class="hero-title" id="start-title">Examen teórico de tránsito</h2>
-      <p class="hero-subtitle">Entrena con preguntas aleatorias, puntaje ponderado y explicación inmediata basada en la Ley 769 de 2002.</p>
-    </div>
-    <div class="road-panel" aria-hidden="true">
-      <div class="road-panel-top">90%</div>
-      <div class="road-panel-road"></div>
-      <div class="road-panel-bottom">para aprobar</div>
-    </div>
-  </section>
-
-  <div class="start-body">
-    <div class="hero-stats" aria-label="Resumen del simulacro">
+  <div class="hero">
+    <div class="hero-eyebrow">Colombia · Ley 769 de 2002</div>
+    <div class="hero-title">Examen<br /><em>teórico</em><br />de tránsito</div>
+    <div class="hero-subtitle">Simulacro oficial · Categoría A2, B1 y C1<br />Preguntas aleatorias cada intento</div>
+    <div class="hero-stats">
       <div class="stat-chip yellow">
         <span class="num">{questionBankSize}</span>
         <span class="lbl">Preguntas</span>
@@ -48,11 +38,13 @@ const rows = WEIGHT_ORDER.map((weight) => ({
         <span class="lbl">Por intento</span>
       </div>
       <div class="stat-chip">
-        <span class="num">{PASS_SCORE}</span>
-        <span class="lbl">Puntos mínimos</span>
+        <span class="num">90%</span>
+        <span class="lbl">Para aprobar</span>
       </div>
     </div>
+  </div>
 
+  <div class="start-body">
     <div class="score-table">
       <div class="score-table-header">
         <span></span>
@@ -80,15 +72,15 @@ const rows = WEIGHT_ORDER.map((weight) => ({
 
     <div class="rules">
       <div class="rule">
-        <div class="rule-icon">01</div>
+        <div class="rule-icon">🔀</div>
         <div class="rule-text"><strong>Aleatorio cada vez.</strong> El orden de preguntas y opciones cambia en cada intento.</div>
       </div>
       <div class="rule">
-        <div class="rule-icon">02</div>
+        <div class="rule-icon">💡</div>
         <div class="rule-text"><strong>Explicación inmediata.</strong> Cada respuesta incluye el artículo de la Ley 769/2002 que la sustenta.</div>
       </div>
       <div class="rule">
-        <div class="rule-icon">03</div>
+        <div class="rule-icon">🎯</div>
         <div class="rule-text"><strong>Necesitas {PASS_SCORE} pts</strong> (90% de {MAX_SCORE}) para aprobar, igual que el examen oficial CALE.</div>
       </div>
     </div>

@@ -94,7 +94,7 @@ function renderQuestion(): void {
 
   mainEl.innerHTML = `
     <div class="card">
-      <div class="question-kicker"><div class="topic-tag">${item.topic}</div><span class="weight-badge ${item.weight}">${wLabel} · ${pts} pts</span></div>
+      <div><div class="topic-tag">${item.topic}</div><span class="weight-badge ${item.weight}">${wLabel} · ${pts} pts</span></div>
       <div class="question">${item.q}</div>
       <div class="options" id="optCont">${optHtml}</div>
       <div class="pts-feedback" id="ptsFeedback"></div>
