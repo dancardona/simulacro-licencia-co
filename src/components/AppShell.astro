@@ -1,0 +1,24 @@
+---
+import Footer from './Footer.astro';
+import Header from './Header.astro';
+import ProgressBar from './ProgressBar.astro';
+import StartScreen from './StartScreen.astro';
+
+type Props = {
+  questionBankSize: number;
+};
+
+const { questionBankSize } = Astro.props;
+---
+
+<div class="app">
+  <div class="quiz-exit-row" id="quizExitWrap" style="display:none;">
+    <button class="quiz-exit-btn" id="exitQuizBtn" type="button" aria-label="Salir del simulacro y volver al inicio">← Salir</button>
+  </div>
+  <Header questionBankSize={questionBankSize} />
+  <ProgressBar />
+  <main id="main">
+    <StartScreen questionBankSize={questionBankSize} />
+  </main>
+  <Footer />
+</div>

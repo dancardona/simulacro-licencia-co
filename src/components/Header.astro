@@ -1,0 +1,25 @@
+---
+import { TOTAL_QUESTIONS } from '../lib/quiz';
+
+type Props = {
+  questionBankSize: number;
+};
+
+const { questionBankSize } = Astro.props;
+---
+
+<header>
+  <div class="masthead-mark">CO</div>
+  <div class="masthead-copy">
+    <div class="eyebrow">Simulacro vial · Colombia</div>
+    <h1>Licencia de conducción</h1>
+    <div class="sub">
+      <p>
+        Practica para tu examen de licencia de conducción con este simulacro gratuito. Contiene {TOTAL_QUESTIONS} preguntas basadas en el banco oficial de preguntas del Ministerio de Transporte de Colombia, con explicaciones detalladas para cada respuesta.
+      </p>
+      <p>
+        El simulacro se actualiza regularmente para reflejar los cambios en el banco de preguntas, y es completamente gratuito para usar. ¡Buena suerte en tu examen!
+      </p>
+    </div>
+  </div>
+</header>

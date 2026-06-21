@@ -1,0 +1,18 @@
+---
+import { MAX_SCORE, TOTAL_QUESTIONS } from '../lib/quiz';
+---
+
+<div id="progress-wrap" style="display:none;">
+  <div class="checkpoint-strip">
+    <div class="checkpoint-label">Control en curso</div>
+    <div class="progress-label">
+      <span id="progressText">Pregunta 1 de {TOTAL_QUESTIONS}</span>
+      <span id="qScoreText"></span>
+    </div>
+  </div>
+  <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+  <div class="score-bar-wrap">
+    <div class="score-bar-track"><div class="score-bar-fill" id="scoreBarFill"></div></div>
+    <div class="score-bar-label" id="scoreBarLabel">0 / {MAX_SCORE} pts</div>
+  </div>
+</div>

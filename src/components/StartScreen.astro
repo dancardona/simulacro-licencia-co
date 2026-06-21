@@ -1,0 +1,102 @@
+---
+import {
+  MAX_SCORE,
+  PASS_SCORE,
+  SAMPLE_COUNTS,
+  TOTAL_QUESTIONS,
+  WEIGHT_LABELS,
+  WEIGHT_ORDER,
+  WEIGHTS,
+} from '../lib/quiz';
+
+type Props = {
+  questionBankSize: number;
+};
+
+const { questionBankSize } = Astro.props;
+const rows = WEIGHT_ORDER.map((weight) => ({
+  weight,
+  label: WEIGHT_LABELS[weight],
+  count: SAMPLE_COUNTS[weight],
+  points: WEIGHTS[weight],
+  total: SAMPLE_COUNTS[weight] * WEIGHTS[weight],
+}));
+---
+
+<div class="start-screen" id="startScreen">
+  <section class="hero" aria-labelledby="start-title">
+    <div class="hero-copy">
+      <div class="hero-eyebrow">Puesto de control · A2, B1 y C1</div>
+      <h2 class="hero-title" id="start-title">Examen teórico de tránsito</h2>
+      <p class="hero-subtitle">Entrena con preguntas aleatorias, puntaje ponderado y explicación inmediata basada en la Ley 769 de 2002.</p>
+    </div>
+    <div class="road-panel" aria-hidden="true">
+      <div class="road-panel-top">90%</div>
+      <div class="road-panel-road"></div>
+      <div class="road-panel-bottom">para aprobar</div>
+    </div>
+  </section>
+
+  <div class="start-body">
+    <div class="hero-stats" aria-label="Resumen del simulacro">
+      <div class="stat-chip yellow">
+        <span class="num">{questionBankSize}</span>
+        <span class="lbl">Preguntas</span>
+      </div>
+      <div class="stat-chip">
+        <span class="num">{TOTAL_QUESTIONS}</span>
+        <span class="lbl">Por intento</span>
+      </div>
+      <div class="stat-chip">
+        <span class="num">{PASS_SCORE}</span>
+        <span class="lbl">Puntos mínimos</span>
+      </div>
+    </div>
+
+    <div class="score-table">
+      <div class="score-table-header">
+        <span></span>
+        <span>Tipo</span>
+        <span>Preguntas</span>
+        <span>Puntaje</span>
+      </div>
+      {
+        rows.map((row) => (
+          <div class="score-row">
+            <div class={`score-pip ${row.weight}`}></div>
+            <span class="score-label">{row.label}</span>
+            <span class="score-qty">{row.count} × {row.points} pts</span>
+            <span class="score-pts">{row.total}</span>
+          </div>
+        ))
+      }
+      <div class="score-row total">
+        <div class="score-pip"></div>
+        <span class="score-label">Total máximo</span>
+        <span class="score-qty">-</span>
+        <span class="score-pts">{MAX_SCORE}</span>
+      </div>
+    </div>
+
+    <div class="rules">
+      <div class="rule">
+        <div class="rule-icon">01</div>
+        <div class="rule-text"><strong>Aleatorio cada vez.</strong> El orden de preguntas y opciones cambia en cada intento.</div>
+      </div>
+      <div class="rule">
+        <div class="rule-icon">02</div>
+        <div class="rule-text"><strong>Explicación inmediata.</strong> Cada respuesta incluye el artículo de la Ley 769/2002 que la sustenta.</div>
+      </div>
+      <div class="rule">
+        <div class="rule-icon">03</div>
+        <div class="rule-text"><strong>Necesitas {PASS_SCORE} pts</strong> (90% de {MAX_SCORE}) para aprobar, igual que el examen oficial CALE.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="start-cta">
+    <button class="cta-btn" id="startBtn">
+      Iniciar simulacro <span>→</span>
+    </button>
+  </div>
+</div>
