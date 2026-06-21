@@ -1,0 +1,12 @@
+---
+import AppShell from '../components/AppShell.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { allQuestions } from '../data/questions';
+---
+
+<BaseLayout>
+  <AppShell questionBankSize={allQuestions.length} />
+  <script>
+    import '../scripts/quiz';
+  </script>
+</BaseLayout>

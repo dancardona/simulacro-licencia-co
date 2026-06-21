@@ -1,0 +1,17 @@
+---
+import { TOTAL_QUESTIONS } from '../lib/quiz';
+
+type Props = {
+  questionBankSize: number;
+};
+
+const { questionBankSize } = Astro.props;
+---
+
+<header>
+  <div class="eyebrow">Simulacro · Examen teórico</div>
+  <h1>Licencia de conducción · Colombia</h1>
+  <div class="sub">
+    Practica con <strong>{TOTAL_QUESTIONS} preguntas aleatorias</strong> del banco de {questionBankSize}, con puntaje ponderado y explicación inmediata.
+  </div>
+</header>

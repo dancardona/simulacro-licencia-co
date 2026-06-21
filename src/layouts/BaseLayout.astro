@@ -1,0 +1,32 @@
+---
+import '../styles/global.css';
+import { SITE_URL, seo } from '../lib/seo';
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{seo.title}</title>
+    <meta name="description" content={seo.description} />
+    <link rel="canonical" href={SITE_URL} />
+    <meta name="robots" content="index, follow" />
+    <meta name="author" content={seo.author} />
+    <meta name="application-name" content={seo.siteName} />
+    <meta name="theme-color" content="#23262b" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={SITE_URL} />
+    <meta property="og:locale" content="es_CO" />
+    <meta property="og:site_name" content={seo.siteName} />
+    <meta property="og:title" content="Simulacro Licencia de Conducción Colombia" />
+    <meta property="og:description" content={seo.ogDescription} />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Simulacro Licencia de Conducción Colombia" />
+    <meta name="twitter:description" content={seo.twitterDescription} />
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(seo.jsonLd)}></script>
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>
