@@ -3,13 +3,18 @@ import { MAX_SCORE, TOTAL_QUESTIONS } from '../lib/quiz';
 ---
 
 <div id="progress-wrap" style="display:none;">
-  <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
-  <div class="progress-label">
-    <span id="progressText">Pregunta 1 de {TOTAL_QUESTIONS}</span>
-    <span id="qScoreText"></span>
-  </div>
-  <div class="score-bar-wrap">
-    <div class="score-bar-track"><div class="score-bar-fill" id="scoreBarFill"></div></div>
-    <div class="score-bar-label" id="scoreBarLabel">0 / {MAX_SCORE} pts</div>
+  <div class="quiz-meter-panel">
+    <div class="progress-label">
+      <span class="meter-kicker" id="progressText">Pregunta 1 de {TOTAL_QUESTIONS}</span>
+      <span class="meter-points" id="qScoreText"></span>
+    </div>
+    <div class="progress-track" aria-hidden="true"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="score-bar-wrap">
+      <div class="score-bar-copy">
+        <span>Puntaje acumulado</span>
+        <strong id="scoreBarLabel">0 de {MAX_SCORE} pts</strong>
+      </div>
+      <div class="score-bar-track" aria-hidden="true"><div class="score-bar-fill" id="scoreBarFill"></div></div>
+    </div>
   </div>
 </div>

@@ -63,7 +63,7 @@ function exitQuiz(): void {
   progressText.textContent = `Pregunta 1 de ${TOTAL_QUESTIONS}`;
   qScoreText.textContent = '';
   scoreBarFill.style.width = '0%';
-  scoreBarLabel.textContent = `0 / ${TOTAL_MAX_SCORE} pts`;
+  scoreBarLabel.textContent = `0 de ${TOTAL_MAX_SCORE} pts`;
   mainEl.innerHTML = initialStartHtml;
   bindStartButton();
 }
@@ -71,18 +71,18 @@ function exitQuiz(): void {
 function updateScoreBar(): void {
   const pct = maxScore > 0 ? (score / maxScore) * 100 : 0;
   scoreBarFill.style.width = `${pct}%`;
-  scoreBarLabel.textContent = `${score.toFixed(1)} / ${maxScore.toFixed(1)} pts`;
+  scoreBarLabel.textContent = `${score.toFixed(1)} de ${maxScore.toFixed(1)} pts`;
 }
 
 function renderQuestion(): void {
   const total = activeQuestions.length;
   progressFill.style.width = `${(current / total) * 100}%`;
-  progressText.textContent = `Pregunta ${current + 1} de ${total}`;
+  progressText.textContent = `Pregunta ${current + 1} / ${total}`;
 
   const item = activeQuestions[current];
   const pts = getQuestionPoints(item.weight);
   const wLabel = getWeightLabel(item.weight);
-  qScoreText.textContent = `Vale ${pts} pts`;
+  qScoreText.textContent = `${pts} pts en juego`;
   updateScoreBar();
 
   const optHtml = item.options
@@ -151,7 +151,7 @@ function nextQuestion(): void {
 function showResults(): void {
   const total = activeQuestions.length;
   progressFill.style.width = '100%';
-  progressText.textContent = `Completado: ${total} de ${total}`;
+  progressText.textContent = `Completado: ${total} / ${total}`;
 
   const pct = (score / maxScore) * 100;
   const threshold = maxScore * PASS_RATIO;
